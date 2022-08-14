@@ -1,7 +1,7 @@
 class Currency{
   String? id;
   String? title;
-  String? price;
+  int? price;
   String? changes;
   String? status;
 

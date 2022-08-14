@@ -4,11 +4,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fp/model/currency.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'dart:developer' as developer;
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget{
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -54,21 +57,24 @@ class MyApp extends StatelessWidget{
         )
       ),
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: const Home(),
     );
   }
 
 }
 
 class Home extends StatefulWidget{
+  const Home({Key? key}) : super(key: key);
+
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  getResponse(){
-    String url = 'https://sasansafari.com/flutter/api.php?access_key=flutter123456';
-    http.get(Uri.parse(url)).then((value) {
+  List<Currency>  currency =[];
+  Future getResponse(BuildContext context) async{
+    String url = "https://sasansafari.com/flutter/api.php?access_key=flutter123456";
+    var value = await http.get(Uri.parse(url));
       if(currency.isEmpty){
         if(value.statusCode == 200){
           List jsonList = convert.jsonDecode(value.body);
@@ -89,14 +95,12 @@ class _HomeState extends State<Home> {
         }
 
       }
-    });
   }
 
-  List<Currency>  currency =[];
 
   @override
   Widget build(BuildContext context) {
-    getResponse();
+    getResponse(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       appBar: AppBar(
@@ -160,12 +164,12 @@ class _HomeState extends State<Home> {
                       );
                     }, separatorBuilder: (BuildContext context, int index) {
                     if(index % 8 == 0){
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(0,8,0,0),
+                      return const Padding(
+                        padding: EdgeInsets.fromLTRB(0,8,0,0),
                         child: Add(),
                       );
                     }else{
-                      return SizedBox.shrink();
+                      return const SizedBox.shrink();
                     }
                 },
                 ),
@@ -201,7 +205,7 @@ class _HomeState extends State<Home> {
                                 borderRadius: BorderRadius.circular(1000)
                               )
                             ),
-                            backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 202, 193, 255),
+                            backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 202, 193, 255),
 
                           )
                           ),
@@ -229,7 +233,7 @@ class MyItem extends StatelessWidget{
   int position;
   List<Currency> currency;
 
-  MyItem(this.position, this.currency);
+  MyItem(this.position, this.currency, {Key? key}) : super(key: key);
 
 
   @override
@@ -251,7 +255,7 @@ class MyItem extends StatelessWidget{
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(currency[position].title!,style: Theme.of(context).textTheme.bodyText1,),
-          Text(currency[position].price!,style: Theme.of(context).textTheme.bodyText1,),
+          Text(currency[position].price.toString(),style: Theme.of(context).textTheme.bodyText1,),
           Text(currency[position].changes!,
             style: currency[position].status == 'p' ? Theme.of(context).textTheme.headline4 : Theme.of(context).textTheme.headline3,
           ),
@@ -262,6 +266,8 @@ class MyItem extends StatelessWidget{
 
 }
 class Add extends StatelessWidget{
+  const Add({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
